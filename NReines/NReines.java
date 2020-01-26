@@ -74,7 +74,14 @@ class Validation extends ZoneCliquable {
 	this.plateau = plateau;
     }
 
-    public void clicGauche() { /* À compléter */ }
+	public void clicGauche() {
+		if (this.plateau.verifieConfiguration()) {
+			this.setBackground(Color.GREEN);
+		}
+		else {
+			this.setBackground(Color.RED);
+		}
+	}
     public void clicDroit() {}
 }
 
@@ -127,17 +134,60 @@ class Plateau extends Grille {
     private Case[][] plateau;
 
     // Constructeur
-    public Plateau(int taille) {
-	// Initialisation de la grille graphique de dimensions taille*taille
-	super(taille, taille);
-	this.taille = taille;
-	
-	/* À compléter ! */
+	public Plateau(int taille) {
+		super(taille, taille);
+		this.taille = taille;
+		this.plateau = new Case[taille][taille];
+		for (int i = 0; i < taille; ++i) {
+			for (int j = 0; j < taille; ++j) {
+				final Case c = new Case(this);
+				this.ajouteElement(this.plateau[i][j] = c);
+			}
+		}
+	}
 
-    }
+	private int compteLigne(final Case[] l) {
+		int nb = 0;
+		for (final Case c : l) {
+			if (c.estOccupee()) {
+				++nb;
+			}
+		}
+		return nb;
+	}
+
+	private boolean verifieLignes() {
+		boolean ok = true;
+		Case[][] plateau;
+		for (int length = (plateau = this.plateau).length, i = 0; i < length; ++i) {
+			final Case[] l = plateau[i];
+			ok = (ok && this.compteLigne(l) < 2);
+		}
+		return ok;
+	}
+
+	private int compteColonne(final int j) {
+		int nb = 0;
+		for (int i = 0; i < this.taille; ++i) {
+			if (this.plateau[i][j].estOccupee()) {
+				++nb;
+			}
+		}
+		return nb;
+	}
+
+	private boolean verifieColonnes() {
+		boolean ok = true;
+		for (int j = 0; j < this.taille; ++j) {
+			ok = (ok && this.compteColonne(j) < 2);
+		}
+		return ok;
+	}
 
     // Méthode de vérification générale.
-    public boolean verifieConfiguration() { return false; /* À remplacer ! */}
+	public boolean verifieConfiguration() {
+		return this.verifieLignes() && this.verifieColonnes() && this.verifieDiagonales() && this.verifieAntidiagonales();
+	}
 
 
     // Cadeau : vérification des diagonales et des antidiagonales.
@@ -150,6 +200,7 @@ class Plateau extends Grille {
     // Pour un plateau de côté [N], et [k] un entier tel que [-N < k < N], la
     // diagonale d'indice [k] est formée par les cases de coordonnées [i, i+k]
     // (pour les [i] tels que cette paire de coordonnées est valide).
+
     private int compteDiagonale(int k) {
 	int nb = 0;
         // Les variables [min, max] sont définies avec les valeurs minimales
@@ -166,6 +217,7 @@ class Plateau extends Grille {
 	}
 	return nb;
     }
+
     private boolean verifieDiagonales() {
         // Les diagonales d'indices [-N+1] et [N-1] ne sont pas analysées, car
         // elles ne sont constituées que d'une case et ne peuvent donc pas
@@ -175,6 +227,8 @@ class Plateau extends Grille {
 	}
 	return true;
     }
+
+
     // L'antidiagonale d'indice [k] est définie similairement à la diagonale
     // d'indice [k], avec les cases de coordonnées [N-1-i, i+k].
     private int compteAntidiagonale(int k) {
@@ -196,6 +250,7 @@ class Plateau extends Grille {
 	}
 	return true;
     }
+
     
     // Méthode vérifiant que la configuration actuelle est
     // résoluble et plaçant le cas échéant dans [indiceL] et
@@ -204,6 +259,7 @@ class Plateau extends Grille {
     // La méthode est récursive, et explore tous les coups valides.
     // Lors de l'exploration d'un coup, la méthode modifie l'échiquier,
     // puis annule ses modifications lors du "backtrack".
+
     public boolean verifieResolubilite() { return false; /* À remplacer ! */}
 	
 }
@@ -229,20 +285,31 @@ class Plateau extends Grille {
 
 class Case extends ZoneCliquable {
 
+	private boolean occupee;
+	private Plateau plateau;
+
     // Constructeur
-    public Case(Plateau plateau) {
-	// Initialisation d'une case cliquable, de dimensions 40*40 pixels.
-	super(40, 40);
-
-	/* À compléter ! */
-
-    }
+	public Case(final Plateau p) {
+		super(40, 40);
+		this.occupee = false;
+		this.plateau = p;
+	}
 
     // Permet de tester si une case est occupée.
-    public boolean estOccupee() { return false; /* À remplacer */ }
+	public boolean estOccupee() {
+		return this.occupee;
+	}
     
     // Action à effectuer lors d'un clic gauche.
-    public void clicGauche() { /* À compléter */ }
+	public void clicGauche() {
+		this.occupee = !this.occupee;
+		if (this.occupee) {
+			this.setBackground(Color.BLACK);
+		}
+		else {
+			this.setBackground(Color.WHITE);
+		}
+	}
 
     // Action à effectuer lors d'un clic droit.
     public void clicDroit() { }

@@ -118,10 +118,10 @@ class Plateau extends Grille
         return ok;
     }
     
+
     public boolean verifieConfiguration() {
         return this.verifieLignes() && this.verifieColonnes() && this.verifieDiagonales() && this.verifieAntidiagonales();
     }
-    
     private int prochaineLigne() {
         int k;
         for (k = 0; k < Plateau.taille && this.compteLigne(this.plateau[k]) != 0; ++k) {}
