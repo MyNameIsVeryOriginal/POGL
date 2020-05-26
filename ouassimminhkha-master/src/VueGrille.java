@@ -4,9 +4,13 @@ import java.util.*;
 
 
 class VueGrille extends JPanel implements Observer {
+    // reference vers le modele
     private Modele modele;
+    
+    // taille d'affichage des cellules
     private final static int TAILLE = 12;
-
+    
+    // constructeur
     public VueGrille(Modele modele){
         this.modele = modele;
         modele.addObserver(this);
@@ -15,9 +19,11 @@ class VueGrille extends JPanel implements Observer {
     }
 
     public void update() {
+        // methode de reaffichage de la grille
         repaint();
     }
 
+    // affichage de la cellule
     public void paint(Graphics g, Cellule c, int x, int y){
         if(c.etat ==0){
             g.setColor(Color.green);
@@ -30,7 +36,8 @@ class VueGrille extends JPanel implements Observer {
         }
         g.fillRect(x,y,TAILLE,TAILLE);
     }
-
+    
+    // fonction du dessin de la cellule
     public void paintCellule(Graphics graphics){
         super.repaint();
         for(int i = 1; i <modele.LARGEUR;i++){
